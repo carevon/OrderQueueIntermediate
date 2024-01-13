@@ -1,11 +1,10 @@
 import { Given, When, Then } from "@cucumber/cucumber";
-// import { expect } from "chai";
-const { expect } = require('chai')
 import * as sinon from "sinon";
+import assert from "assert";
 import { GetOrderQueueUseCase } from "../../src/domain/aggregates/orderQueue/usecases/getOrderQueue/GetOrderQueue";
+import { GetOrderQueueOutputDTO } from "../../src/domain/aggregates/orderQueue/usecases/getOrderQueue/GetOrderQueueDTO";
 
-let getOrderQueueUseCase: GetOrderQueueUseCase;
-let result: any;
+let result: GetOrderQueueOutputDTO;
 
 const mockOrderQueue = {
 	id: "123456",
@@ -25,37 +24,31 @@ const QueueGatewayMock = {
 	rollback: sinon.stub(),
 };
 
+const mockGetOrderQueue: GetOrderQueueOutputDTO = {
+	hasError: false,
+	result: [mockOrderQueue],
+};
+
 Given("inicio a listagem de queue sem passar ID", async function () {
-    // getOrderQueueUseCase = new GetOrderQueueUseCase(QueueGatewayMock);
+	const getOrderUseCase = new GetOrderQueueUseCase();
+	return getOrderUseCase;
 });
 
 When("eu busco pela informacao de pedidos sem passar o id", async function () {
-    result = await GetOrderQueueUseCase.execute({}, QueueGatewayMock);
+	result = await GetOrderQueueUseCase.execute({}, QueueGatewayMock);
+	return result;
 });
 
-Then("o resultado deve ser de sucesso", async function () {
-    expect(result.hasError).to.be.false;
-    expect(result.httpCode).to.equal(200);
+Then("o resultado deve ser de sucesso", function () {
+	// Comparação usando assert.deepStrictEqual
+	assert.deepStrictEqual(
+		result.hasError,
+		false,
+		"O campo hasError deve ser false"
+	);
+	assert.deepStrictEqual(
+		result.result,
+		[mockOrderQueue],
+		"O campo result deve corresponder ao mockOrderQueue"
+	);
 });
-
-
-
-// Given("inicio a listagem de queue sem passar ID", async function () {
-// 	getOrderQueueUseCase = new GetOrderQueueUseCase();
-// });
-
-// When("eu busco pela informacao de pedidos sem passar o id", async function () {
-//     // Ensure getOrderQueueUseCase is properly instantiated with its dependencies
-//     result = await getOrderQueueUseCase.execute({});
-// });
-
-// // When("eu busco pela informacao de pedidos sem passar o id", async function () {
-// // 	// Execute o caso de uso
-// // 	result = await GetOrderQueueUseCase.execute({}, QueueGatewayMock);
-// // });
-
-// Then("o resultado deve ser de sucesso", async function () {
-// 	// Verifique se não há erro e a resposta é bem-sucedida
-// 	expect(result.hasError).to.be.false;
-// 	expect(result.httpCode).to.equal(200);
-// });
