@@ -11,6 +11,6 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "features/**/*.ts", "step-definitions/getOrderQueue.steps.ts"], // Arquivos TypeScript incluídos na compilação
+  "include": ["src/**/*.ts"], // Arquivos TypeScript incluídos na compilação
   "exclude": ["node_modules", "dist"] // Diretórios excluídos da compilação
 }

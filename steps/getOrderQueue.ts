@@ -1,10 +1,10 @@
 import { Given, When, Then } from "@cucumber/cucumber";
+import { expect } from "chai";
+import * as sinon from "sinon";
 import { GetOrderQueueUseCase } from "../src/domain/aggregates/orderQueue/usecases/getOrderQueue/GetOrderQueue";
 
 let getOrderQueueUseCase: GetOrderQueueUseCase;
-let params: any;
 let result: any;
-
 
 const mockOrderQueue = {
 	id: "123456",
@@ -14,32 +14,27 @@ const mockOrderQueue = {
 	orderDate: "11/07/2023",
 };
 
-const mockGetOrderQueue = {
-	hasError: false,
-	result: [mockOrderQueue],
-};
-
 const QueueGatewayMock = {
-	getOrderQueue: jest.fn().mockResolvedValue([mockOrderQueue]),
-	getOrderQueueStatus: jest.fn(),
-	updateOrderQueue: jest.fn(),
-	add: jest.fn(),
-	beginTransaction: jest.fn(),
-	commit: jest.fn(),
-	rollback: jest.fn(),
+	getOrderQueue: sinon.stub().resolves([mockOrderQueue]),
+	getOrderQueueStatus: sinon.stub(),
+	updateOrderQueue: sinon.stub(),
+	add: sinon.stub(),
+	beginTransaction: sinon.stub(),
+	commit: sinon.stub(),
+	rollback: sinon.stub(),
 };
 
-Given("inicio a listagem de queue sem passar ID", () => {
+Given("inicio a listagem de queue sem passar ID", async function () {
 	getOrderQueueUseCase = new GetOrderQueueUseCase();
 });
 
-When("eu busco pela informacao de pedidos sem passar o id", async () => {
+When("eu busco pela informacao de pedidos sem passar o id", async function () {
 	// Execute o caso de uso
 	result = await GetOrderQueueUseCase.execute({}, QueueGatewayMock);
 });
 
-Then("o resultado deve ser de sucesso", () => {
+Then("o resultado deve ser de sucesso", async function () {
 	// Verifique se não há erro e a resposta é bem-sucedida
-	expect(result.hasError).toBe(false);
-	expect(result.httpCode).toBe(200);
+	expect(result.hasError).to.be.false;
+	expect(result.httpCode).to.equal(200);
 });
